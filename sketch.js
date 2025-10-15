@@ -3,7 +3,7 @@ function setup() {
   pixelDensity(1); 
   noStroke();
 }
-
+//check
 function draw() {
   loadPixels();
 
