@@ -1,5 +1,9 @@
+let c
+
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  c = createCanvas(windowWidth, windowHeight);
+  c.position(0,0)
+  c.style('z-index',-1)
   pixelDensity(1); 
   noStroke();
 }
