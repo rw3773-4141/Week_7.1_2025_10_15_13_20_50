@@ -6,23 +6,115 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <meta charset="utf-8" />
 
+    <style>
+  html, body { height: 100%; overflow: hidden; }
+  .subtitle {
+    position: absolute;
+    display: inline-block;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font: 700 18px/1.1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    color: #0f172a; 
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,.15);
+    user-select: none;
+    cursor: pointer;
+    transition: transform .08s ease;
+    will-change: transform, left, top;
+  }
+  .subtitle:active { transform: scale(.98); }
+</style>
+
   </head>
   <body style="background-color:white">
-    <p id = "title">These are my sketches.</p>
+    <p id="title" style="color:#ec2e2e; font-size:48px; font-weight:800;">Welcome</p>
     <div style= "height:50px;"></div>
     
-    <a href = "https://rw3773-4141.github.io/Homework_4.2_2025_10_20_13_22_46/">LINK 1</a>
-    <div style= "height:10px;"></div>
-    <a href = "">LINK 2</a>
-    <div style= "height:20;"></div>
+    
 
-    <a href = "sketch1.html">sketch 1</a>
-    <div style= "height:20;"></div>
-    <a href = "sketch2.html">sketch 2</a>
-
+    <a class="subtitle" href="sketch1.html">sketch1</a>
+    <a class="subtitle" href="sketch2.html">sketch2</a>
+    <a class="subtitle" href="sketch3.html">sketch3</a>
+    <a class="subtitle" href="https://rw3773-4141.github.io/Homework_4.2_2025_10_20_13_22_46/">track your mouse</a>
 
     
     <div style= "height:50px;"></div>
     <script src="sketch.js"></script>
+
+    <script>
+(() => {
+  const chips = Array.from(document.querySelectorAll('.subtitle'));
+  if (!chips.length) return;
+
+  
+  const palette = ['#FFD166', '#06D6A0', '#118AB2', '#EF476F', '#CDB4DB', '#FDE68A', '#9AE6B4', '#A7F3D0'];
+
+  
+  const state = chips.map((el, i) => {
+    el.style.background = palette[i % palette.length];
+    
+    const w = el.offsetWidth || 120;
+    const h = el.offsetHeight || 40;
+    const x = Math.random() * Math.max(1, (window.innerWidth  - w));
+    const y = Math.random() * Math.max(1, (window.innerHeight - h));
+
+    
+    const speed = 1.2 + Math.random() * 1.4;
+    const angle = Math.random() * Math.PI * 2;
+    let vx = Math.cos(angle) * speed;
+    let vy = Math.sin(angle) * speed;
+
+    
+    let frozen = false;
+    el.addEventListener('mouseenter', () => frozen = true);
+    el.addEventListener('mouseleave', () => frozen = false);
+
+    return { el, x, y, vx, vy, w, h, frozen };
+  });
+
+  
+  chips.forEach(el => el.style.zIndex = 10);
+
+  function layoutSizes() {
+    state.forEach(s => {
+      s.w = s.el.offsetWidth;
+      s.h = s.el.offsetHeight;
+      
+      s.x = Math.min(Math.max(0, s.x), Math.max(0, window.innerWidth  - s.w));
+      s.y = Math.min(Math.max(0, s.y), Math.max(0, window.innerHeight - s.h));
+      s.el.style.left = s.x + 'px';
+      s.el.style.top  = s.y + 'px';
+    });
+  }
+
+  function tick() {
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+
+    for (const s of state) {
+      if (!s.frozen) {
+        s.x += s.vx;
+        s.y += s.vy;
+
+        
+        if (s.x <= 0)               { s.x = 0;               s.vx = Math.abs(s.vx); }
+        if (s.y <= 0)               { s.y = 0;               s.vy = Math.abs(s.vy); }
+        if (s.x + s.w >= W)         { s.x = W - s.w;         s.vx = -Math.abs(s.vx); }
+        if (s.y + s.h >= H)         { s.y = H - s.h;         s.vy = -Math.abs(s.vy); }
+      }
+
+      s.el.style.left = s.x + 'px';
+      s.el.style.top  = s.y + 'px';
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  
+  layoutSizes();
+  window.addEventListener('resize', layoutSizes, { passive: true });
+  requestAnimationFrame(tick);
+})();
+</script>
   </body>
 </html>
